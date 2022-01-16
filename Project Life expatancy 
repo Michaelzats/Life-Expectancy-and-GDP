@@ -1,0 +1,147 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+from matplotlib import pyplot as plt
+import pandas as pd
+import seaborn as sns
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[9]:
+
+
+df = pd.read_csv('all_data.csv')
+df.head()
+
+
+# In[12]:
+
+
+# Unique data
+print(df.Country.unique())
+print(df.Year.unique())
+
+
+# In[13]:
+
+
+df = df.rename({"Life expectancy at birth (years)":"LEABY"}, axis = "columns")
+df.head()
+
+
+# In[105]:
+
+
+dfMeans = df.drop("Year", axis = 1).groupby("Country").mean().reset_index()
+plt.figure(figsize=(8,6))
+sns.barplot(x="LEABY", y="Country", data=dfMeans)
+plt.xlabel("Life expectancy at birth (years)");
+
+
+# In[107]:
+
+
+plt.figure(figsize=(8,6))
+sns.barplot(x="GDP", y="Country", data=dfMeans)
+plt.xlabel("GDP in Trillions of U.S. Dollars");
+
+
+# In[116]:
+
+
+fig, axes = plt.subplots(1, 2, sharey=True, figsize=(15, 5))
+axes[0] = sns.violinplot(ax=axes[0], x=df.GDP, y=df.Country,color = "black")
+axes[0] = sns.swarmplot(ax=axes[0], x=df.GDP, y=df.Country)
+axes[0].set_xlabel("GDP in Trillions of U.S. Dollars")
+axes[1] = sns.violinplot(ax=axes[1], x=df.LEABY, y=df.Country, color = "black")
+axes[1] = sns.swarmplot(ax=axes[1], x=df.LEABY, y=df.Country)
+axes[1].set_xlabel("Life expectancy at birth (years)");
+
+
+# In[98]:
+
+
+# GDP OF THE COUNTRIES IN TRILLION USD
+
+plt.figure(figsize=(8,6))
+sns.lineplot(x=df.Year, y=df.GDP, hue=df.Country)
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), ncol=1)
+plt.ylabel("GDP in Trillions of U.S. Dollars");
+
+
+# In[ ]:
+
+
+
+
+
+# In[102]:
+
+
+graphGDP = sns.FacetGrid(df, col="Country", col_wrap=3,
+                      hue = "Country", sharey = False)
+
+graphGDP = (graphGDP.map(sns.lineplot,"Year","GDP")
+         .add_legend()
+         .set_axis_labels("Year","GDP in Trillions of U.S. Dollars"))
+
+
+# In[117]:
+
+
+# LIFE EXPECTANCY OF THE COUNTRIES IN TRILLION USD
+
+plt.figure(figsize=(8,6))
+sns.lineplot(x=df.Year, y=df.LEABY, hue=df.Country)
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), ncol=1)
+plt.ylabel("GDP in Trillions of U.S. Dollars");
+
+
+# In[119]:
+
+
+graphGDP = sns.FacetGrid(df, col="Country", col_wrap=3,
+                      hue = "Country", sharey = False)
+
+graphGDP = (graphGDP.map(sns.lineplot,"Year","LEABY")
+         .add_legend()
+         .set_axis_labels("Year","GDP in Trillions of U.S. Dollars"))
+
+
+# In[120]:
+
+
+sns.scatterplot(x=df.LEABY, y=df.GDP, hue=df.Country).legend(loc='center left', bbox_to_anchor=(1, 0.5), ncol=1);
+
+
+# In[121]:
+
+
+graph = sns.FacetGrid(df, col="Country", col_wrap=3,
+                      hue = "Country", sharey = False, sharex = False)
+graph = (graph.map(sns.scatterplot,"LEABY", "GDP")
+         .add_legend()
+         .set_axis_labels("Life expectancy at birth (years)", "GDP in Trillions of U.S. Dollars"));
+
+
+# In[ ]:
+
+
+# Conclusion
+#
+# This project was able to make quite a few data visualizations with the data even though there were only 96 rows and 4 columns.
+# The project was also able to answer some of the questions posed in the beginning:
+# get_ipython().set_next_input('Has life expectancy increased over time in the six nations');get_ipython().run_line_magic('pinfo', 'nations')
+# Yes with Zimbabwe having the greatest increase.
+# get_ipython().set_next_input('Has GDP increased over time in the six nations');get_ipython().run_line_magic('pinfo', 'nations')
+# GDP has also increased for all countries in our list, especially for China.
+# get_ipython().set_next_input('Is there a correlation between GDP and life expectancy of a country');get_ipython().run_line_magic('pinfo', 'country')
+# Yes there is a positive correlation between GDP and life expectancy for countries in our list.
+# get_ipython().set_next_input('What is the average life expectancy in these nations');get_ipython().run_line_magic('pinfo', 'nations')
+# Average life expectancy was between mid to high 70s for the countries except for Zimbabwe which was 50.
+# get_ipython().set_next_input('What is the distribution of that life expectancy');get_ipython().run_line_magic('pinfo', 'expectancy')
+# the life expectancy had a left skew, or most of the observations were on the right side.
+#
